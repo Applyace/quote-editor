@@ -1,0 +1,11 @@
+name: Fisrt Work Flow
+on: workflow_dispatch
+jobs:
+  first-job:
+    runs-on: macos-latest
+    steps: 
+      - name: Print Greeting
+        run: echo "hello world"
+      - name: print goodby
+        run: echo "done and bye"
+        
