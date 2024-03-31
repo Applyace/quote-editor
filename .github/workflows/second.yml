@@ -50,5 +50,5 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
         run: |
-          bin/rails test
+          bin/rails test:system  
 
