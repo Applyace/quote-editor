@@ -1,0 +1,13 @@
+name: Test Project
+on: push
+jobs:
+  test:
+    run-on: macos-latest
+    steps:
+      - name: Checkout get code
+        uses: actions/checkout@v4.1.1
+      - name: install dependencies
+        run: npm ci
+      - name: run tests
+        run: npm test
+
