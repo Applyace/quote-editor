@@ -45,6 +45,12 @@ jobs:
         run: |
           bin/rails db:prepare
 
+      - name: Run migrations
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
+        run: bin/rails db:migrate
+
       - name: Run tests
         env:
           RAILS_ENV: test
