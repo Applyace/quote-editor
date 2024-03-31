@@ -15,7 +15,6 @@ jobs:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
-        # Options to ensure the service container is ready
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -43,25 +42,14 @@ jobs:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
         run: |
-          bin/rails db:prepare
+          bin/rails db:create
+          bin/rails db:schema:load
 
       - name: Check Migrations
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
         run: bin/rails db:migrate:status
-
-      - name: Load Schema
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
-        run: bin/rails db:schema:load
-
-      - name: Run Migrations
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
-        run: bin/rails db:migrate
 
       - name: Run tests
         env:
