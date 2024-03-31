@@ -1,40 +1,54 @@
-name: Test Project
-on: push
+name: Rails CI
+
+on: [push, pull_request]
+
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:12
         env:
           POSTGRES_DB: quote_editor_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
+        # Options to ensure the service container is ready
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - name: Checkout get code
-        uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v2
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1.0' 
+          ruby-version: 3.0.1 # Adjust the Ruby version as needed
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get install libpq-dev
 
       - name: Install dependencies
         run: |
           gem install bundler -v 2.4.19
-          bundle install
+          bundle install --jobs 4 --retry 3
 
-      - name: Setup database
+      - name: Setup Database
         env:
+          RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
         run: |
           bin/rails db:prepare
 
       - name: Run tests
         env:
+          RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/quote_editor_test
-        run: bin/rails test:system
+        run: |
+          bin/rails test
+
