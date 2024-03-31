@@ -1,12 +1,38 @@
 name: Test Project
+
 on: push
+
 jobs:
   test:
     runs-on: macos-latest
+
     steps:
       - name: Checkout get code
         uses: actions/checkout@v4.1.1
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.0' # Specify your project's Ruby version here
+
+      - name: Install dependencies
+        run: |
+          gem install bundler -v 2.4.19 # Adjust the Bundler version as needed
+          bundle install
+
+      # Add steps for database setup here if your tests need it
+      # Example for PostgreSQL setup (adjust as necessary):
+      # - name: Install PostgreSQL client
+      #   run: brew install postgresql
+
+      # - name: Setup Database
+      #   env:
+      #     RAILS_ENV: test
+      #   run: |
+      #     bin/rails db:create
+      #     bin/rails db:schema:load
+
       - name: Run tests
-      env:
-        RAILS_ENV: test
-      run: bin/rails test:system
+        env:
+          RAILS_ENV: test
+        run: bin/rails test:system
